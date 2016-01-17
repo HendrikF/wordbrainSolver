@@ -13,3 +13,72 @@ Then use `solve.py` to solve the puzzles using the prepared list of words.
 I am running this under Ubuntu, so I can not tell, whether it works on Windows.
 
 Additionally the script might focus on German words.
+
+Example usage:
+```
+$ ./solve.py 
+Please enter the characters of each line (. = End)
+BTP
+LUE
+UPP
+.
+Starting to solve... (This may take a while...)
+B
+Bute
+Blut
+tue
+Tulpe
+Pep
+Pep
+Puppe
+Puppe
+Pul
+Pulpe
+Pult
+Pub
+Pute
+Luppe
+Lupe
+Luppe
+Lupe
+Lupe
+Luppe
+Lupe
+LTE
+U
+et
+U
+Pul
+Pult
+Pul
+Pult
+Pub
+Pute
+Pep
+Pep
+Pul
+Pulpe
+Pult
+Pub
+Pute
+Pep
+Pep
+Found 17 solutions in 66.79791498184204 seconds:
+U
+B
+et
+Pep
+Pul
+LTE
+Pub
+tue
+Pult
+Lupe
+Blut
+Bute
+Pute
+Luppe
+Puppe
+Tulpe
+Pulpe
+```
