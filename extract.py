@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import re
 
-gender = (re.compile('({[mfn]})'), '')
-brackets = (re.compile('(?:[\[<(])(.+)(?:[\]>)])'), '')
+gender = (re.compile('{[mfn]}'), '')
+brackets = (re.compile('[\[<(].+[\]>)]'), '')
 
 invalidChars = ' -?!0123456789:.\'"'
 
