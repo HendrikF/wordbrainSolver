@@ -66,17 +66,20 @@ def main():
     matrix = readMatrix()
 
     print('Starting to solve... (This may take a while...)')
+    print('Press CTRL-C to cancel')
 
     solutions = []
-    for y in range(len(matrix)):
-        for x in range(len(matrix[y])):
-            solutions.extend(solve(words, wordsLower, matrix, x, y))
+    try:
+        for y in range(len(matrix)):
+            for x in range(len(matrix[y])):
+                solutions.extend(solve(words, wordsLower, matrix, x, y))
+        
+        # filter and sort
+        solutions = list(sorted(set(solutions), key = lambda word: str(len(word)) + word.lower()))
+    except KeyboardInterrupt as e:
+        print('Canceled')
 
-    # filter and sort
-    solutions = list(sorted(set(solutions), key = lambda word: len(word)))
-    solutions = sorted(solutions, key = lambda word: len(word))
-
-    print('Found {} solutions in {} seconds:'.format(len(solutions), time() - start))
+    print('Found {} possible solutions in {} seconds:'.format(len(solutions), time() - start))
     for word in solutions:
         print(word)
 
