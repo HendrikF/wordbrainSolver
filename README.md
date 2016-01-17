@@ -4,7 +4,7 @@ This __python 3__ script was build to solve the puzzles given by the __Android a
 
 It achieves that by extracting words from the database of http://dict.cc and combining all given characters.
 
-Because of their license, I am not able to include the database in this Repo and you have to download it by yourself.
+Because of their license, I am not able to include the database in this Repo and you have to download it by yourself. (http://www1.dict.cc/translation_file_request.php)
 
 First execute `extract.py` to extract a unique list of words from the translation database.
 
