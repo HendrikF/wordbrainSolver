@@ -34,7 +34,7 @@ def readBoundaries():
         else:
             break
     if minimum > maximum:
-        print('Swapped values!')
+        print('Swapping values!')
         return (maximum, minimum)
     return (minimum, maximum)
 
@@ -77,9 +77,14 @@ def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUnti
     return solutions
 
 def main():
+    CORES = 4
+    
     words = readWords('words.txt')
     wordsLower = [word.lower() for word in words]
-
+    
+    print('WORDBRAIN solver')
+    print('Running on {} cores!'.format(CORES))
+    
     matrix = readMatrix()
     
     boundaries = readBoundaries()
@@ -90,10 +95,16 @@ def main():
     print('Press CTRL-C to cancel')
     
     solutions = []
+    args = []
+    for y in range(len(matrix)):
+        for x in range(len(matrix[y])):
+            args.append((words, wordsLower, matrix, x, y, boundaries))
+    
     try:
-        for y in range(len(matrix)):
-            for x in range(len(matrix[y])):
-                solutions.extend(solve(words, wordsLower, matrix, x, y, boundaries))
+        from multiprocessing import Pool
+        with Pool(CORES) as pool:
+            for arr in pool.starmap(solve, args):
+                solutions.extend(arr)
         
         # filter and sort
         solutions = list(sorted(set(solutions), key = lambda word: str(len(word)) + word.lower()))
