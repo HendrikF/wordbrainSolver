@@ -49,10 +49,6 @@ def contains(word, words, wordsLower):
     return False
 
 def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUntilNow = '', closedPath = []):
-    if (x, y) in closedPath:
-        return []
-    if not (0 <= y < len(matrix) and 0 <= x < len(matrix[y])):
-        return []
     closedPath.append((x, y))
     
     solutions = []
@@ -60,22 +56,21 @@ def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUnti
     currentWord = wordUntilNow + matrix[y][x]
     
     if boundaries[0] <= len(currentWord) <= boundaries[1]:
-        
         word = contains(currentWord, words, wordsLower)
         if word:
             print(word)
             solutions.append(word)
     
     if len(currentWord) <= boundaries[1]:
-        
-        solutions.extend(solve(words, wordsLower, matrix, x + 1, y    , boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x + 1, y + 1, boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x    , y + 1, boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x - 1, y + 1, boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x - 1, y    , boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x - 1, y - 1, boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x    , y - 1, boundaries, currentWord, closedPath))
-        solutions.extend(solve(words, wordsLower, matrix, x + 1, y - 1, boundaries, currentWord, closedPath))
+        for dy in range(-1, 2):
+            for dx in range(-1, 2):
+                if dx == dy == 0:
+                    continue
+                if (x + dx, y + dy) in closedPath:
+                    continue
+                if not (0 <= y + dy < len(matrix) and 0 <= x + dx < len(matrix[y + dy])):
+                    continue
+                solutions.extend(solve(words, wordsLower, matrix, x + dx, y + dy, boundaries, currentWord, closedPath))
     
     closedPath.remove((x, y))
 
@@ -93,7 +88,7 @@ def main():
 
     print('Starting to solve... (This may take a while...)')
     print('Press CTRL-C to cancel')
-
+    
     solutions = []
     try:
         for y in range(len(matrix)):
