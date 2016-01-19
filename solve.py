@@ -1,19 +1,9 @@
 #!/usr/bin/python3
 from datetime import datetime
 from multiprocessing import Pool
-from util import readWords, readMatrix, readBoundaries
+from util import readMatrix, readBoundaries, WordList
 
-def contains(word, words, wordsLower):
-    ''' Looks for word in wordsLower and returns word with the case of words
-    '''
-    word = word.lower()
-    if word in wordsLower:
-        for w in words:
-            if word == w.lower():
-                return w
-    return False
-
-def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUntilNow = '', closedPath = []):
+def solve(wordList, matrix, x, y, boundaries, wordUntilNow = '', closedPath = []):
     closedPath.append((x, y))
     
     solutions = []
@@ -21,7 +11,7 @@ def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUnti
     currentWord = wordUntilNow + matrix[y][x]
     
     if boundaries[0] <= len(currentWord) <= boundaries[1]:
-        word = contains(currentWord, words, wordsLower)
+        word = wordList.check(currentWord)
         if word:
             print(word)
             solutions.append(word)
@@ -35,7 +25,7 @@ def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUnti
                     continue
                 if not (0 <= y + dy < len(matrix) and 0 <= x + dx < len(matrix[y + dy])):
                     continue
-                solutions.extend(solve(words, wordsLower, matrix, x + dx, y + dy, boundaries, currentWord, closedPath))
+                solutions.extend(solve(wordList, matrix, x + dx, y + dy, boundaries, currentWord, closedPath))
     
     closedPath.remove((x, y))
 
@@ -44,15 +34,15 @@ def solve(words, wordsLower, matrix, x = 0, y = 0, boundaries = (0, 0), wordUnti
 def main():
     CORES = 4
     
-    words = readWords('words.txt')
-    wordsLower = [word.lower() for word in words]
-    
     print('WORDBRAIN solver')
     print('Running on {} cores!'.format(CORES))
     
     matrix = readMatrix()
     
     boundaries = readBoundaries()
+    
+    wordList = WordList(boundaries)
+    wordList.readFromFile('words.txt')
     
     start = datetime.now()
 
@@ -63,7 +53,7 @@ def main():
     args = []
     for y in range(len(matrix)):
         for x in range(len(matrix[y])):
-            args.append((words, wordsLower, matrix, x, y, boundaries))
+            args.append((wordList, matrix, x, y, boundaries))
     
     try:
         with Pool(CORES) as pool:
