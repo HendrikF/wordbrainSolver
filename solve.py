@@ -1,42 +1,7 @@
 #!/usr/bin/python3
-from time import time
-
-def readWords(filename):
-    words = []
-    with open(filename) as f:
-        for line in f:
-            words.append(line.strip())
-    return words
-
-def readMatrix():
-    matrix = []
-    print('Please enter the characters of each line (. = End)')
-    while True:
-        text = input()
-        if text == '.':
-            break
-        matrix.append(text)
-    return matrix
-
-def readBoundaries():
-    while True:
-        try:
-            minimum = int(input('Minimum length: '))
-        except ValueError as e:
-            print('Please enter a number!')
-        else:
-            break
-    while True:
-        try:
-            maximum = int(input('Maximum length: '))
-        except ValueError as e:
-            print('Please enter a number!')
-        else:
-            break
-    if minimum > maximum:
-        print('Swapping values!')
-        return (maximum, minimum)
-    return (minimum, maximum)
+from datetime import datetime
+from multiprocessing import Pool
+from util import readWords, readMatrix, readBoundaries
 
 def contains(word, words, wordsLower):
     ''' Looks for word in wordsLower and returns word with the case of words
@@ -89,7 +54,7 @@ def main():
     
     boundaries = readBoundaries()
     
-    start = time()
+    start = datetime.now()
 
     print('Starting to solve... (This may take a while...)')
     print('Press CTRL-C to cancel')
@@ -101,7 +66,6 @@ def main():
             args.append((words, wordsLower, matrix, x, y, boundaries))
     
     try:
-        from multiprocessing import Pool
         with Pool(CORES) as pool:
             for arr in pool.starmap(solve, args):
                 solutions.extend(arr)
@@ -111,7 +75,7 @@ def main():
     except KeyboardInterrupt as e:
         print('Canceled')
 
-    print('Found {} possible solutions in {} seconds:'.format(len(solutions), time() - start))
+    print('Found {} possible solutions in {}:'.format(len(solutions), datetime.now() - start))
     for word in solutions:
         print(word)
 
