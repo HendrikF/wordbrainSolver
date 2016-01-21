@@ -55,7 +55,7 @@ class Matrix:
         newMatrix = copy.deepcopy(self.matrix)
         for position in positions:
             newMatrix[position[1]][position[0]] = ''
-        self.gravity()
+        newMatrix.gravity()
         return newMatrix
     
     def gravity(self):
