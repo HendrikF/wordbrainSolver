@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 from datetime import datetime
 from multiprocessing import Pool
-from util import readMatrix, readBoundaries, WordList
+from util import readMatrix, readBoundaries, WordList, Matrix
 
 def solve(wordList, matrix, x, y, boundaries, wordUntilNow = '', closedPath = []):
     closedPath.append((x, y))
     
     solutions = []
     
-    currentWord = wordUntilNow + matrix[y][x]
+    currentWord = wordUntilNow + matrix.get(x, y)
     
     if boundaries[0] <= len(currentWord) <= boundaries[1]:
         word = wordList.check(currentWord)
@@ -23,7 +23,9 @@ def solve(wordList, matrix, x, y, boundaries, wordUntilNow = '', closedPath = []
                     continue
                 if (x + dx, y + dy) in closedPath:
                     continue
-                if not (0 <= y + dy < len(matrix) and 0 <= x + dx < len(matrix[y + dy])):
+                if not (0 <= y + dy < matrix.height and 0 <= x + dx < matrix.width):
+                    continue
+                if matrix.get(x + dx, y + dy) == '':
                     continue
                 solutions.extend(solve(wordList, matrix, x + dx, y + dy, boundaries, currentWord, closedPath))
     
@@ -37,7 +39,9 @@ def main():
     print('WORDBRAIN solver')
     print('Running on {} cores!'.format(CORES))
     
-    matrix = readMatrix()
+    matrix = Matrix(readMatrix())
+    
+    print(matrix)
     
     boundaries = readBoundaries()
     
@@ -51,8 +55,8 @@ def main():
     
     solutions = []
     args = []
-    for y in range(len(matrix)):
-        for x in range(len(matrix[y])):
+    for y in range(matrix.height):
+        for x in range(matrix.width):
             args.append((wordList, matrix, x, y, boundaries))
     
     try:
