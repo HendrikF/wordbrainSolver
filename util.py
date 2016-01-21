@@ -91,7 +91,7 @@ class Matrix:
         self.calcSize()
 
 def readMatrix():
-    print('Please enter the characters of each line (. = End)')
+    print('Please enter the characters of each line (. = End, Space for Space)')
     # (['ab', 'cd'])
     textMatrix = []
     while True:

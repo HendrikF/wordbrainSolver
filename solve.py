@@ -41,8 +41,6 @@ def main():
     
     matrix = Matrix(readMatrix())
     
-    print(matrix)
-    
     boundaries = readBoundaries()
     
     wordList = WordList(boundaries)
