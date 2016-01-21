@@ -106,10 +106,9 @@ def readMatrix():
     # create list matrix ([['a', 'b'], ['c', 'd']])
     listMatrix = []
     for y in range(len(textMatrix)):
-        row = []
+        row = [''] * maxwidth
         listMatrix.append(row)
         for x in range(len(textMatrix[y])):
-            row.append('')
             if textMatrix[y][x] == ' ':
                 continue
             listMatrix[y][x] = textMatrix[y][x]
