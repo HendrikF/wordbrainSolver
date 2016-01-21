@@ -26,10 +26,8 @@ def prepare(word):
 
 def read_dict(filename):
     words = set()
-    i = 0
     with open(filename, 'rb') as f:
         while True:
-            i += 1
             line = f.readline()
             if not line:
                 break
@@ -48,7 +46,7 @@ def read_dict(filename):
     return words
 
 def main():
-    words = list(sorted(read_dict('dict.cc.txt')))
+    words = list(sorted(read_dict('dict.cc.txt'), key = lambda word: word.lower()))
 
     with open('words.txt', 'w') as f:
         for word in words:
