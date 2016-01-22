@@ -49,6 +49,9 @@ class Matrix:
     def __repr__(self):
         return '\n'.join([''.join([c.upper() if c else ' ' for c in row]) for row in self.matrix])
     
+    def __bool__(self):
+        return len(self.matrix) > 0
+    
     def get(self, x, y):
         return self.matrix[y][x]
     
