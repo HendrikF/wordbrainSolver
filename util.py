@@ -32,6 +32,7 @@ class Matrix:
     def __init__(self, matrix):
         self.matrix = matrix
         self.calcSize()
+        self.gravity()
     
     def calcSize(self):
         self._height = len(self.matrix)
@@ -75,9 +76,15 @@ class Matrix:
                     y_ += 1
                 self.matrix[y_][x] = char
         
-        if self.height:
-            # remove empty first lines, if we have lines
+        self.trim()
+    
+    def trim(self):
+        # if we have a matrix
+        if self.matrix:
+            # remove empty lines at the beginning
             while True:
+                if not self.matrix:
+                    break
                 firstLineIsEmpty = True
                 for char in self.matrix[0]:
                     if char:
@@ -85,6 +92,30 @@ class Matrix:
                         break
                 if firstLineIsEmpty:
                     self.matrix = self.matrix[1:]
+                else:
+                    break
+            
+            # remove empty columns at the beginning
+            while True:
+                if not self.matrix or not self.matrix[0]:
+                    break
+                # we assume that gravity has been called before
+                # so we only have to check the last line for characters
+                if not self.matrix[len(self.matrix)-1][0]:
+                    for y in range(len(self.matrix)):
+                        self.matrix[y] = self.matrix[y][1:]
+                else:
+                    break
+            
+            # remove empty columns at the end
+            while True:
+                if not self.matrix or not self.matrix[0]:
+                    break
+                # we assume that gravity has been called before
+                # so we only have to check the last line for characters
+                if not self.matrix[len(self.matrix)-1][len(self.matrix[0])-1]:
+                    for y in range(len(self.matrix)):
+                        self.matrix[y] = self.matrix[y][:-1]
                 else:
                     break
         
