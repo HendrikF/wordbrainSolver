@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 from datetime import datetime
-from multiprocessing import Pool
+import multiprocessing
 from util import readMatrix, readBoundaries, WordList, Matrix
 
 def solve(wordList, matrix, x, y, boundaries, wordUntilNow = '', closedPath = []):
@@ -21,33 +21,40 @@ def solve(wordList, matrix, x, y, boundaries, wordUntilNow = '', closedPath = []
             for dx in range(-1, 2):
                 if dx == dy == 0:
                     continue
-                if (x + dx, y + dy) in closedPath:
+                newx = x + dx
+                newy = y + dy
+                if (newx, newy) in closedPath:
                     continue
-                if not (0 <= y + dy < matrix.height and 0 <= x + dx < matrix.width):
+                if not (0 <= newy < matrix.height and 0 <= newx < matrix.width):
                     continue
-                if matrix.get(x + dx, y + dy) == '':
+                if matrix.get(newx, newy) == '':
                     continue
-                solutions.extend(solve(wordList, matrix, x + dx, y + dy, boundaries, currentWord, closedPath))
+                solutions.extend(solve(wordList, matrix, newx, newy, boundaries, currentWord, closedPath))
     
     closedPath.remove((x, y))
 
     return solutions
 
 def main():
-    CORES = 4
-    
     print('WORDBRAIN solver')
+    
+    try:
+        CORES = multiprocessing.cpu_count()
+    except NotImplementedError as e:
+        CORES = 4
+        print('Could not determine CPU count. Assuming {} cores'.format(CORES))
+    
     print('Running on {} cores!'.format(CORES))
     
     matrix = Matrix(readMatrix())
     
     boundaries = readBoundaries()
     
-    wordList = WordList(boundaries)
+    wordList = WordList(matrix, boundaries)
     wordList.readFromFile('words.txt')
     
     start = datetime.now()
-
+    
     print('Starting to solve... (This may take a while...)')
     print('Press CTRL-C to cancel')
     
@@ -57,16 +64,13 @@ def main():
         for x in range(matrix.width):
             args.append((wordList, matrix, x, y, boundaries))
     
-    try:
-        with Pool(CORES) as pool:
-            for arr in pool.starmap(solve, args):
-                solutions.extend(arr)
-        
-        # filter and sort
-        solutions = list(sorted(set(solutions), key = lambda word: str(len(word)) + word.lower()))
-    except KeyboardInterrupt as e:
-        print('Canceled')
-
+    with multiprocessing.Pool(CORES) as pool:
+        for arr in pool.starmap(solve, args):
+            solutions.extend(arr)
+    
+    # filter and sort
+    solutions = list(sorted(set(solutions), key = lambda word: str(len(word)) + word.lower()))
+    
     print('Found {} possible solutions in {}:'.format(len(solutions), datetime.now() - start))
     for word in solutions:
         print(word)

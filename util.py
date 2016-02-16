@@ -1,19 +1,46 @@
 import copy
 
 class WordList:
-    def __init__(self, boundaries = None):
+    def __init__(self, matrix, boundaries):
+        self.chars = self.countCharsOfMatrix(matrix)
         self.boundaries = boundaries
         self.words = {}
         self.wordsLower = {}
     
+    def countCharsOfMatrix(self, matrix):
+        chars = {}
+        for y in range(matrix.height):
+            for x in range(matrix.width):
+                char = matrix.get(x, y).lower()
+                chars.setdefault(char, 0)
+                chars[char] += 1
+        return chars
+    
+    def countCharsOfWord(self, word):
+        chars = {}
+        for char in word:
+            char = char.lower()
+            chars.setdefault(char, 0)
+            chars[char] += 1
+        return chars
+    
     def add(self, word):
         if not word:
             return
-        if self.boundaries is not None:
-            if not (self.boundaries[0] <= len(word) <= self.boundaries[1]):
+        if not (self.boundaries[0] <= len(word) <= self.boundaries[1]):
+            return
+        
+        # Filter words with wrong characters
+        chars = self.countCharsOfWord(word)
+        for char, count in chars.items():
+            if char not in self.chars:
                 return
-        self.words.setdefault(word[0].lower(), []).append(word)
-        self.wordsLower.setdefault(word[0].lower(), []).append(word.lower())
+            if count > self.chars[char]:
+                return
+        
+        firstChar = word[0].lower()
+        self.words.setdefault(firstChar, []).append(word)
+        self.wordsLower.setdefault(firstChar, []).append(word.lower())
     
     def check(self, word):
         first = word[0].lower()
@@ -56,9 +83,9 @@ class Matrix:
         return self.matrix[y][x]
     
     def remove(self, positions):
-        newMatrix = copy.deepcopy(self.matrix)
+        newMatrix = copy.deepcopy(self)
         for position in positions:
-            newMatrix[position[1]][position[0]] = ''
+            newMatrix.matrix[position[1]][position[0]] = ''
         newMatrix.gravity()
         return newMatrix
     
